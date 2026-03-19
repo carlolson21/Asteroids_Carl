@@ -8,7 +8,7 @@ class Player(CircleShape):
 		self.rotation = 0
 		self.cooldown = 0
 		self.booster = PLAYER_BOOSTER
-		self.booster_cooldown = PLAYER_BOOSTER_COOLDOWN
+		self.booster_cooldown = 0
 		
 	def triangle(self):
 		forward = pygame.Vector2(0, 1).rotate(self.rotation)
@@ -27,39 +27,44 @@ class Player(CircleShape):
 	def update(self, dt):
 		keys = pygame.key.get_pressed()
 		
+		#Cooling and Recharge
+		if self.booster_cooldown > 0:
+			self.booster_cooldown -= dt
+			if self.booster_cooldown <= 0:
+				self.booster = PLAYER_BOOSTER
+				self.booster_cooldown = 0
+		
+		#Rotation
 		if keys[pygame.K_LEFT] or keys[pygame.K_a]:
 			self.rotate(-dt)
 		if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
 			self.rotate(dt)
+			
+		#Forward Movement and Boosting
 		if keys[pygame.K_UP] or keys[pygame.K_w]:
-			if keys[pygame.K_LSHIFT]:
-				if self.booster > 0:
-					self.move(dt * 2)
-					self.booster -= 0.1
-				else:
-					self.move(dt)
+			if keys[pygame.K_LSHIFT] and self.booster > 0 and self.booster_cooldown <= 0:
+				self.move(dt * 2)
+				self.booster -= dt
+				if self.booster <= 0 or not keys[pygame.K_LSHIFT]:
+					self.booster = 0
+					self.booster_cooldown = PLAYER_BOOSTER_COOLDOWN				
 			else:
 				self.move(dt)
-				
+				if self.booster < PLAYER_BOOSTER and self.booster_cooldown <= 0:
+					self.booster = 0
+					self.booster_cooldown = PLAYER_BOOSTER_COOLDOWN
+		
+		#Reverse
 		if keys[pygame.K_DOWN] or keys[pygame.K_s]:
 			self.move(-dt)
-		if keys[pygame.K_SPACE]:
-			if self.cooldown > 0:
-				pass
-			else:
-				self.shoot()
-				
+			
+		#Shooting
+		if keys[pygame.K_SPACE] and self.cooldown <= 0:
+			self.shoot()
 		if self.cooldown > 0:
-			self.cooldown -= dt
-		elif self.cooldown <= 0:
-			self.cooldown = 0
-			
-		if self.booster_cooldown > 0:
-			self.booster_cooldown -= 0.1
-		elif self.booster_cooldown <= 0:
-			self.booster = PLAYER_BOOSTER
-			self.booster_cooldown = PLAYER_BOOSTER_COOLDOWN
-			
+			self.cooldown -= dt		
+		
+		#Boundaries
 		self.position.x = max(self.radius, min(self.position.x, SCREEN_WIDTH - self.radius))
 		self.position.y = max(self.radius, min(self.position.y, SCREEN_HEIGHT - self.radius))
 				
@@ -75,4 +80,5 @@ class Player(CircleShape):
 		shot.velocity = shot.velocity.rotate(self.rotation)
 		shot.velocity *= PLAYER_SHOOT_SPEED
 		self.cooldown = PLAYER_SHOOT_COOLDOWN_SECONDS
+		
 

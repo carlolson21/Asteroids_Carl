@@ -15,7 +15,7 @@ def get_initials(screen):
         screen.fill("black")
         font = pygame.font.Font(None, 74)
         text = font.render(f"ENTER INITIALS: {initials}", True, "white")
-        screen.blit(text, (SCREEN_WIDTH // 4, SCREEN_HEIGHT // 2))
+        screen.blit(text, (SCREEN_WIDTH // 3, SCREEN_HEIGHT // 2))
         pygame.display.flip()
     return initials
     
@@ -43,7 +43,7 @@ def show_leaderboard(screen, all_games):
             txt = f"{entry['name']}: {entry['time']}s"
             screen.blit(font.render(txt, True, "white"), (450, 100 + i * 40))
 
-        screen.blit(font.render("Press ESC to Quit", True, "gray"), (SCREEN_WIDTH//3, 400))
+        screen.blit(font.render("Press ESC to Exit Leaderboard", True, "gray"), (SCREEN_WIDTH//2, 400))
         pygame.display.flip()
 
         for event in pygame.event.get():

@@ -4,7 +4,7 @@ from constants import *
 def draw_game_over_message(screen):
     # Create a dark transparent overlay
     overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
-    overlay.set_alpha(128) # 0 is clear, 255 is solid
+    overlay.set_alpha(135) # 0 is clear, 255 is solid
     overlay.fill((0, 0, 0))
     screen.blit(overlay, (0,0))
 
